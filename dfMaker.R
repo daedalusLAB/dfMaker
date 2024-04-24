@@ -37,7 +37,7 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
   # Control variable to ensure message is printed only once
   message_printed <- FALSE  
   
-  # Función para determinar si la lista 'people' está vacía o no
+  # Function to determine whether the 'people' list is empty or not
   is_lista_vacia <- function(objeto) {
     return(length(objeto$people) == 0)
   }
@@ -87,6 +87,7 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
     network_code <- ifelse(config$extract_network_code, sub("^.*_\\d{4}_\\w{2}_([^_]+)_.*$", "\\1", metadata), NA)
     program_name <- ifelse(config$extract_program_name, sub("^.*_\\d{4}_\\w{2}_[^_]+_(.*?)_\\d+-\\d+.*$", "\\1", metadata), NA)
     time_range <- ifelse(config$extract_time_range, sub("^.*_(\\d+-\\d+)_.*$", "\\1", metadata), NA)
+    
     # Process keypoints data and compile into data frames
     for (i in 1:nrow(rawData)) {
       for (j in 1:ncol(rawData)) {
@@ -94,9 +95,9 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
         matrix_data <- apply(matrix_data, 2, as.numeric)
         matrix_data[,1:2][matrix_data[,1:2] == 0] <- NA #Zeros as NAs
         
-        # Crear el vector origen cuando j=1
+        # Create the origin vector when j=1
         if (j == 1) {
-          origen <- matrix_data[2, 1:2] # Extraer la segunda fila y las primeras dos columnas
+          origen <- matrix_data[2, 1:2] # Extract second row and two first columns
           v.i<- c(matrix_data[6,1],0)
           v.j<- v.i[2:1]*-1 # orthonormal
         }
@@ -104,15 +105,15 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
         m<-sweep(matrix_data[, 1:2], 2, origen, FUN = "-")
         
         
-        # Pre-allocar la matriz con NA o ceros
+        # Pre-allocated the matrix with NA or zeros
         newm <- matrix(NA, nrow = nrow(m), ncol = 2)
         
-        # Matriz identidad
+        # Identity matrix
   
         a<- matrix( data = c( v.i,v.j ) , nrow = 2 )
         
-        # Calcular denominador común fuera del bucle
-        denominador_comun <- a[1, 1] * a[2, 2] - a[2, 1] * a[2, 1]
+        # Calculate common denominator outside the loop
+        denominador_comun <- a[1, 1] * a[2, 2] - a[1, 2] * a[2, 1]
         
         for ( k in 1:nrow( m ) ) {
           
@@ -145,7 +146,7 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
       }
     }
     
-    cat("\n")  # Separador entre archivos
+    cat("\n")  # File separator
     
     cat("\nThe frame ", frame, " has been read\n")
     
@@ -153,7 +154,7 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
       # If rawData is empty, print a message indicating it
       cat("File:", basename(frame_file), "\n")
       cat("File is  empty\n\n")
-      # archived[length(archived) + 1] <- frame_file # activar ne caso de querer info de los frames vacíos.
+      # archived[length(archived) + 1] <- frame_file # archive empty frames info
     }
     
   }
@@ -202,6 +203,4 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
 
 
 # save new version
-# save(dfMaker,file="dfMaker.rda")
-
-
+save(dfMaker,file="dfMaker.rda")
