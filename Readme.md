@@ -233,9 +233,7 @@ Cramer's Rule is a theorem in linear algebra that provides the solution to a sys
 
 To apply Cramer's Rule for our purpose of coordinate normalization and Y-axis inversion, consider a system where the transformations are linear and can be represented by equations relating original keypoints to their transformed counterparts. For a transformation involving normalization based on the distance between specific keypoints (like the chest and shoulder) and inversion of the Y-axis, the system of equations can be represented as follows:
 
-$$
-P'_k = P_k \cdot M_{t} = \begin{bmatrix} x_i \\ y_j \end{bmatrix} \cdot \begin{bmatrix} P_{5}^{pose} & 0 \\ 0 & -P_{5}^{pose} \end{bmatrix} = \begin{bmatrix} x_i \cdot P_{5}^{pose} \\ -y_j \cdot P_{5}^{pose} \end{bmatrix} = \begin{bmatrix} x'_i \\ y'_j \end{bmatrix}
-$$
+![](./images/dfMaker_expression.png)
 
 To begin, we need to define our transformation matrix for the new coordinate system. In the generic case of `dfMaker`, the left shoulder point, identified as point 5 in the `pose_keypoints` ($P_{5}^{pose}$), is chosen to define the unit. Additionally, we need to consider the reflection of the 'y' axis over the 'x' axis.
 
