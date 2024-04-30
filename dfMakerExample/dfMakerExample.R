@@ -1,5 +1,5 @@
 # Load the dfMaker function into the R session
-load("./dfMaker/functionsRData/dfMaker.rda")
+load("dfMaker.rda")
 
 # Example 1: Basic use with auto-saving, no extra configuration variables provided
 # This will process OpenPose JSON files from the specified input folder and automatically
