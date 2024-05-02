@@ -3,6 +3,9 @@
 
 - [Overview](#overview)
   - [Installation Guide](#installation-guide)
+    - [Step 1: Installing R](#step-1-installing-r)
+    - [Step 2: Installing RStudio (Optional)](#step-2-installing-rstudio-optional)
+    - [Step 3: Running `dfMaker`](#step-3-running-dfmaker)
 - [Usage](#usage)
   - [Basic Usage](#basic-usage)
   - [Saving to a Specific File](#saving-to-a-specific-file)
@@ -12,11 +15,13 @@
 - [Configuration File Structure](#configuration-file-structure)
 - [Functionality](#functionality)
 - [Output](#output)
-- [Algebraic Definition of M_{i,j} Matrix](#algebraic-definition-of-m_ij-matrix)
-- [Coordinate Normalization and Y-Axis Inversion](#coordinate-normalization-and-y-axis-inversion)
-- [Applying Cramer's Rule for Coordinate Transformation](#applying-cramers-rule-for-coordinate-transformation)
+- [Algebraic Definition of Matrix](#algebraic-definition-of-matrix)
+- [Coordinate Transformation and Y-Axis Inversion](#coordinate-transformation-and-y-axis-inversion)
+  - [Axial Reflection](#axial-reflection)
+  - [Applying Cramer's Rule for Coordinate Transformation](#applying-cramers-rule-for-coordinate-transformation)
 - [Collaboration and Contributions](#collaboration-and-contributions)
   - [Reporting Issues or Asking Questions](#reporting-issues-or-asking-questions)
+
 
 
 ---
@@ -185,9 +190,29 @@ This tool facilitates the detailed analysis of human poses, movements, and inter
 
 
 
-## Algebraic Definition of \( M_{i,j} \) Matrix
+## Algebraic Definition of Matrix
 
-![](./images/matrix_structure.png)
+The \( M_{i,j} \) matrix is an organized representation of the keypoints data processed by OpenPose. This structured matrix format simplifies the handling and analysis of keypoints data by organizing it into rows and columns, where each row corresponds to a keypoint and each column represents one of the three attributes: x-coordinate, y-coordinate, and the confidence score. Here's the structured representation of the matrix:
+
+$$
+M_{i,j} =
+  \begin{bmatrix}
+K_{1,x} & K_{1,y} & K_{1,c} \\
+K_{2,x} & K_{2,y} & K_{2,c} \\
+\vdots & \vdots & \vdots \\
+K_{N,x} & K_{N,y} & K_{N,c}
+\end{bmatrix}
+$$
+
+In this matrix:
+
+- \( K \) represents any keypoint.
+
+- \( N \) represents the \( N \)-th keypoint.
+
+- \( j \) (the column index) indicates which variable (x, y, c) is being described.
+
+This format ensures that each keypoint’s positional and confidence data is systematically organized and easily accessible for further processing and analysis.
 
 
 
@@ -196,7 +221,7 @@ This tool facilitates the detailed analysis of human poses, movements, and inter
 This section explains the process of normalizing keypoints coordinates obtained from computer vision software, ensuring the data aligns with a mathematical coordinate system. Given the nature of computer vision data, where the origin often differs from traditional Cartesian systems, we introduce a method to normalize and adjust the orientation of keypoints data.
 
 
-## Axial Reflection
+### Axial Reflection
 
 As we observed in the below figure, the original coordinates from `OpenPose` are positioned in a Cartesian quadrant, specifically the first quadrant where all values are positive. Additionally, since the origin of coordinates is fixed at the top-left corner, the values increase as we move down the image. This poses a challenge in interpreting the data, which can make it difficult, if not impossible, to conceive complex models for Human Pose Estimation (HPE).
 
@@ -221,15 +246,10 @@ $$
 
 
 
-## Applying Cramer's Rule for Coordinate Transformation
+### Applying Cramer's Rule for Coordinate Transformation
 
-Cramer's Rule offers a systematic way to solve systems of linear equations that arise during the normalization and transformation of keypoints coordinates from computer vision outputs. This method is particularly useful for calculating the transformation matrix coefficients when we need to adjust the coordinate system based on keypoints, such as normalizing distances or inverting axes.
+Cramer's Rule offers a systematic way to solve systems of linear equations that arise during the normalization and transformation of keypoints coordinates from computer vision outputs. This method is particularly useful for calculating the transformation matrix coefficients when we need to adjust the coordinate system based on keypoints, such as normalizing distances or inverting axes. It is a theorem in linear algebra that provides the solution to a system of linear equations with as many equations as unknowns, given that the system's matrix determinant is non-zero. This makes it especially handy for calculating transformations involving scaling and rotation where the equations are linear.
 
-### Overview of Cramer's Rule
-
-Cramer's Rule is a theorem in linear algebra that provides the solution to a system of linear equations with as many equations as unknowns, given that the system's matrix determinant is non-zero. It is especially handy for calculating transformations involving scaling and rotation where the equations are linear.
-
-### Transformation Matrix Calculation
 
 To apply Cramer's Rule for our purpose of coordinate normalization and Y-axis inversion, consider a system where the transformations are linear and can be represented by equations relating original keypoints to their transformed counterparts. For a transformation involving normalization based on the distance between specific keypoints (like the chest and shoulder) and inversion of the Y-axis, the system of equations can be represented as follows:
 
@@ -241,7 +261,7 @@ Once the transformation matrix is defined, we only need to multiply each point i
 
 
 
-### Integration with Computer Vision Data
+## Integration with Computer Vision Data
 
 When working with keypoints data from computer vision software like OpenPose, this approach allows for precise adjustment of the coordinate system to fit analytical or visualization needs. By applying transformations derived through Cramer's Rule, data scientists and researchers can ensure that their keypoints data is properly scaled and oriented, facilitating more accurate analysis and interpretation of human poses and movements.
 
