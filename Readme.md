@@ -18,7 +18,8 @@
 - [Algebraic Definition of Matrix](#algebraic-definition-of-matrix)
 - [Coordinate Transformation and Y-Axis Inversion](#coordinate-transformation-and-y-axis-inversion)
   - [Axial Reflection](#axial-reflection)
-  - [Applying Cramer's Rule for Coordinate Transformation](#applying-cramers-rule-for-coordinate-transformation)
+  - [Applying Cramer's Rule for Coordinate Transformation](#applying-cramers-rule-for-coordinate-transformation) 
+- [ROC Curve Comparative Test for Wrist Coordinate Classification](#roc-curve-comparative-test-for-wrist-coordinate-classification)
 - [Collaboration and Contributions](#collaboration-and-contributions)
   - [Reporting Issues or Asking Questions](#reporting-issues-or-asking-questions)
 
@@ -265,6 +266,62 @@ Once the transformation matrix is defined, we only need to multiply each point i
 
 When working with keypoints data from computer vision software like OpenPose, this approach allows for precise adjustment of the coordinate system to fit analytical or visualization needs. By applying transformations derived through Cramer's Rule, data scientists and researchers can ensure that their keypoints data is properly scaled and oriented, facilitating more accurate analysis and interpretation of human poses and movements.
 
+
+## ROC Curve Comparative Test for Wrist Coordinate Classification
+
+### Objective
+The ROC Curve Comparative Test aims to evaluate the performance of a logistic regression model in classifying wrist coordinates as either left or right wrist positions, based on keypoints from `pose_keypoints` where point 7 corresponds to the left wrist and point 4 to the right wrist. The model is tested using both transformed (nx, ny) and non-transformed (x, y) coordinates extracted from 381 videos. **Each video features a single individual facing the camera, providing a controlled setting for accurate pose analysis.**
+
+### Methodology
+The test involves a logistic regression model built within the R programming environment, following this procedure:
+
+1. **Data Preparation**: Splitting the dataset into training and test subsets.
+2. **Data Transformation**: Applying a transformation to one set of coordinates while leaving the other set as original.
+3. **Model Training**: Training the logistic regression model on both sets of data separately to assess the impact of the transformation.
+4. **Prediction and Performance Evaluation**: Generating predictions for both datasets and evaluating them using the ROC curve and Area Under Curve (AUC) metrics.
+
+### Test Code Example
+
+```R
+# Load necessary packages
+library(caret)
+library(pROC)
+
+# Prepare the data
+set.seed(123)
+partition <- createDataPartition(y = filtered_data$points, p = 0.7, list = FALSE)
+training_data <- filtered_data[partition, ]
+test_data <- filtered_data[-partition, ]
+
+# Apply transformation to one set of coordinates
+# Assuming transformation details are provided earlier or elsewhere in the documentation
+
+# Train the model for transformed coordinates
+probabilities_transformed <- predict(model, newdata = test_data[c('nx', 'ny')], type = "response")
+
+# Train the model for non-transformed coordinates
+probabilities_non_transformed <- predict(model, newdata = test_data[c('x', 'y')], type = "response")
+
+# Generate ROC curves
+roc_transformed <- roc(test_data$points, probabilities_transformed)
+roc_non_transformed <- roc(test_data$points, probabilities_non_transformed)
+
+# Plot ROC curves
+plot(roc_transformed, col = "#1c61b6")
+plot(roc_non_transformed, col = "#ff8c00", add = TRUE)
+legend("bottomleft", legend = c(paste("Transformed. AUC = ", round(roc_transformed$auc, 3)),
+                                 paste("Non-transformed. AUC = ", round(roc_non_transformed$auc, 3))),
+       col = c("#1c61b6", "#ff8c00"), lwd = 2)
+```
+
+### Results
+
+![ROC curve](./images/ROC_curve.png)
+
+Using transformed data (blue line), the model achieved an AUC of 0.995, indicating near-perfect classification ability. Conversely, using original data (orange line), the model recorded a lower AUC of 0.751, suggesting lower accuracy. This highlights the significant impact of data transformation on the model's predictive performance.
+
+### Conclusion
+Data transformation significantly improves the logistic regression model's predictive accuracy, particularly when classifying wrist positions in a structured setting where only one individual is present per video, and they are directly facing the camera. This test is a vital component of our ongoing efforts to refine data processing techniques for enhanced predictive performance in pose analysis.
 
 
 ## Collaboration and Contributions
