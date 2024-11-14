@@ -121,8 +121,8 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
         # Create the origin vector when j=1
         if (j == 1) {
           origen <- matrix_data[2, 1:2] # Extract second row and two first columns
-          v.i<- c(matrix_data[6,1],0)
-          v.j<- v.i[2:1]*-1 # orthonormal
+          v.i <- c(matrix_data[6, 1] - origen[1], 0)
+          v.j <- c(v.i[2], -v.i[1])  # Orthogonal vector
         }
         
         m<-sweep(matrix_data[, 1:2], 2, origen, FUN = "-")
