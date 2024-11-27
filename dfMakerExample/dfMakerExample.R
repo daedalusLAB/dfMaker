@@ -10,7 +10,9 @@ example1 <- dfMaker(input.folder = "./dfMakerExample/exampleVideos/2006-01-14_06
 # This will process the data and not save it to a file, useful for in-memory analysis or when saving is not required.
 example2 <- dfMaker(input.folder = "./dfMakerExample/exampleVideos/2006-01-14_0600_US_KTTV-FOX_Ten_OClock_News_273-275_ID202_back_then/",
                     output.path = "./dfMakerExample/outputs",
-                    no_save = TRUE)
+                    no_save = TRUE,
+                    transformation_coords = c(NA,4,7,NA),
+                    fast_scaling = TRUE)
 
 # Example 3: Specifying an output file and path to save as a Parquet file
 # This will process the data and save it to the specified Parquet file within the given output path.
