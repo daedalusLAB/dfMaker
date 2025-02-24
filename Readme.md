@@ -35,71 +35,58 @@ The `dfMaker` function is a comprehensive tool designed for processing and organ
 
 ![dfMaker diagram](./images/dfMaker-diagrama_english.png)
 
-## Installation Guide
+To integrate `dfMaker` into your workflow, it's now part of the `multimolang` package, which streamlines multimodal data analysis in linguistic research. Here's how to install and use it:
 
-This guide provides a step-by-step process to set up your environment for using `dfMaker`, including the installation of R, RStudio (optional), and how to run `dfMaker`.
+**Installation Steps:**
 
-### Step 1: Installing R
+1. **Install the `multimolang` Package:**
 
-`dfMaker` requires R to be installed on your system. Follow these instructions to install R:
+   - Open your R console and execute:
+   
+     ```r
+     install.packages("multimolang")
+     ```
+   - This command installs `multimolang` from CRAN, including the `dfMaker` function.
 
-1. **Visit CRAN**: Navigate to the [CRAN website](https://cran.r-project.org/) to access the R distribution for your operating system.
+2. **Load the `multimolang` Package:**
 
-2. **Download R**:
-    - **Windows**: Click on "Download R for Windows", then "install R for the first time" to download the R installer.
-    - **MacOS**: Click on "Download R for (Mac) OS X", and download the latest `.pkg` file.
-    - **Linux**: Click on "Download R for Linux", choose your distribution, and follow the instructions to use your package manager for installation.
+   - After installation, load the package with:
+   
+     ```r
+     library(multimolang)
+     ```
 
-3. **Install R**: Run the downloaded installer or package file and follow the prompts to complete the installation of R on your system.
+**Using `dfMaker`:**
 
-### Step 2: Installing RStudio (Optional)
+The `dfMaker` function processes OpenPose JSON files into structured data frames. Here's how to use it:
 
-RStudio is an integrated development environment (IDE) for R. It's optional but recommended for a more user-friendly experience.
+1. **Prepare Your Data:**
 
-1. **Visit RStudio**: Go to the [RStudio download page](https://www.rstudio.com/products/rstudio/download/#download) to find the RStudio Desktop version for your operating system.
+   - Ensure your OpenPose JSON files are organized in a single directory.
 
-2. **Download RStudio**:
-    - Select the free version named "RStudio Desktop Open Source License" and download it for your operating system.
+2. **Run `dfMaker`:**
 
-3. **Install RStudio**: Execute the downloaded file and follow the installation instructions to install RStudio on your computer.
+   - Specify the directory containing your JSON files:
+   
+     ```r
+     df <- dfMaker(input.folder = "path/to/your/JSON/files")
+     ```
+     
+   - This command processes the JSON files and returns a data frame with the structured data.
 
-### Step 3: Running `dfMaker`
+**Additional Information:**
 
-With R (and optionally RStudio) installed, you're ready to use `dfMaker`.
+- **Dependencies:** `dfMaker` utilizes the `arrow` package for efficient data handling. If not already installed, you can add it using:
+  
+```r
+  install.packages("arrow")
+  ```
 
-1. **Install `arrow` package** (if not already installed by `dfMaker`):
-
-    ```r
-    if (!require("arrow", quietly = TRUE)) {
-      install.packages("arrow", dependencies = TRUE, ask = FALSE)
-      library(arrow)
-    }
-    ```
-    Note: `dfMaker` is designed to check for the `arrow` package and install it automatically if it's not present.
-
-2. **Load `dfMaker`**:
-    - Ensure `dfMaker.rda` is in your working directory or provide the full path to the file.
-    ```r
-    load("dfMaker.rda")  # Adjust the path as necessary
-    ```
-
-3. **Execute `dfMaker`**:
-    - Use `dfMaker` by specifying the directory with your OpenPose JSON files. By default, `dfMaker` processes these files and saves the output in `./df_outputs/` with an auto-generated file name.
-    ```r
-    dfMaker(input.folder = "path/to/your/JSON/files")
-    ```
-
-This setup ensures you have everything needed to start working with `dfMaker` effectively, from installing the necessary software to running the function itself.
-
+- **Documentation:** For detailed information and advanced usage, refer to the [multimolang package documentation](https://cran.r-project.org/package=multimolang).
 
 
 ## Usage
 
-Load the `dfMaker` function into your R session:
-
-```r
-load("dfMaker.rda")
-```
 
 Below are several examples demonstrating different use cases:
 
@@ -177,7 +164,7 @@ Each field in the configuration file is a boolean that indicates whether the cor
 `dfMaker` performs the following operations:
 - Reads JSON files from `input.folder`, each representing keypoints data for individual frames produced by OpenPose.
 - Processes each file according to the configurations specified in `config.path` (if provided).
-- Constructs \( M_{i,j} \) matrices for each detected person and point type, organizing keypoints data into a structured format.
+- Constructs $M_{i,j}$ matrices for each detected person and point type, organizing keypoints data into a structured format.
 - Optionally extracts additional metadata based on file names and the specified configuration.
 - Combines all processed data into a single dataframe.
 - Outputs the consolidated data to `output.file` in the specified format (CSV or Parquet), automatically naming the file based on unique IDs if required.
@@ -193,7 +180,7 @@ This tool facilitates the detailed analysis of human poses, movements, and inter
 
 ## Algebraic Definition of Matrix
 
-The \( M_{i,j} \) matrix is an organized representation of the keypoints data processed by OpenPose. This structured matrix format simplifies the handling and analysis of keypoints data by organizing it into rows and columns, where each row corresponds to a keypoint and each column represents one of the three attributes: x-coordinate, y-coordinate, and the confidence score. Here's the structured representation of the matrix:
+The $M_{i,j}$ matrix is an organized representation of the keypoints data processed by OpenPose. This structured matrix format simplifies the handling and analysis of keypoints data by organizing it into rows and columns, where each row corresponds to a keypoint and each column represents one of the three attributes: x-coordinate, y-coordinate, and the confidence score. Here's the structured representation of the matrix:
 
 $$
 M_{i,j} =
@@ -207,11 +194,11 @@ $$
 
 In this matrix:
 
-- \( K \) represents any keypoint.
+- $K$ represents any keypoint.
 
-- \( N \) represents the \( N \)-th keypoint.
+- $N$ represents the $N$-th keypoint.
 
-- \( j \) (the column index) indicates which variable (x, y, c) is being described.
+- $j$ (the column index) indicates which variable (x, y, c) is being described.
 
 This format ensures that each keypoint’s positional and confidence data is systematically organized and easily accessible for further processing and analysis.
 
@@ -226,7 +213,10 @@ This section explains the process of normalizing keypoints coordinates obtained 
 
 As we observed in the below figure, the original coordinates from `OpenPose` are positioned in a Cartesian quadrant, specifically the first quadrant where all values are positive. Additionally, since the origin of coordinates is fixed at the top-left corner, the values increase as we move down the image. This poses a challenge in interpreting the data, which can make it difficult, if not impossible, to conceive complex models for Human Pose Estimation (HPE).
 
-![Example of HPE vector space transformation](./images/coordDiff.png)
+
+| Original | Transformed |
+|----------|-------------|
+| ![Original](images/animation_original.gif) | ![Transformadas](images/animation_transformed.gif) |
 
 For this reason, it is necessary to obtain a coherent coordinate system that allows us to interpret the human pose in a more intuitive way. A simple reflection, which is even simpler in two dimensions, allows us to present our HPE data effectively for modeling with minimal computational cost.
 
